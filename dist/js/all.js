@@ -12,16 +12,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function generateImageSeed() {
-  return new Date().getTime();
-}
-
 function generateRandomImage() {
-  return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/200?random&t=".concat(generateImageSeed(), "\">");
+  var imageSeed = new Date().getTime();
+  return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/200?random&t=".concat(imageSeed, "\">");
 }
 
-function getCurrentImageSrc() {
-  return $("#res img").prop("src");
+function renderNewImage() {
+  $("#res img").remove();
+  $("#res").append(generateRandomImage());
 }
 
 function clearSuccessPrompt() {
@@ -31,42 +29,47 @@ function clearSuccessPrompt() {
   }
 }
 
-function updateCollection(email, image) {
-  savedImages.push({
-    email: email,
-    image: image
-  });
-  var counts = {};
+function calcOccurences(array) {
+  var occurenceObject = {};
+
+  for (var i = 0; i < array.length; i++) {
+    occurenceObject[array[i]] = occurenceObject[[array[i]]] ? occurenceObject[[array[i]]] + 1 : 1;
+  }
+
+  return occurenceObject;
+}
+
+function renderCollections() {
   var savedEmails = savedImages.map(function (item) {
     return item.email;
   });
-
-  for (var i = 0; i < savedEmails.length; i++) {
-    counts[savedEmails[i]] = counts[[savedEmails[i]]] ? counts[[savedEmails[i]]] + 1 : 1;
-  }
+  var userFrequencies = calcOccurences(savedEmails); //collectionContainers conditionally generates HTML for each user based on number of respective saved images.
 
   var collectionContainers = savedImages.map(function (item) {
-    if (counts[item.email] == 1) {
-      var HTMLString = "<details>\n            <summary>".concat(item.email, "</summary>\n            <img src=").concat(item.image, " alt=\"a randomly generated image\">\n            </details>");
+    var currentUser = item.email;
+    var numberOfImagesOwned = userFrequencies[currentUser];
+
+    if (numberOfImagesOwned == 1) {
+      var HTMLString = "<details>\n            <summary>".concat(currentUser, "</summary>\n            <img src=").concat(item.image, " alt=\"a randomly generated image\">\n            </details>");
       return HTMLString;
-    } else {
+    } else if (numberOfImagesOwned > 1) {
       var currentImageArray = [];
+      var HTMLImages = ""; //Generate array of image srcs
 
-      var _HTMLString = "<details>\n            <summary>".concat(item.email, "</summary>");
-
-      for (var _i = 0; _i < savedImages.length; _i++) {
-        if (savedImages[_i].email == item.email) {
-          currentImageArray.push(savedImages[_i]["image"]);
+      for (var i = 0; i < savedImages.length; i++) {
+        if (savedImages[i].email == currentUser) {
+          currentImageArray.push(savedImages[i]["image"]);
         }
-      }
+      } //Construct HTML String using image src array
 
-      console.log(currentImageArray);
 
-      for (var _i2 = 0; _i2 < currentImageArray.length; _i2++) {
-        _HTMLString = _HTMLString + "<img src=".concat(currentImageArray[_i2], " alt=\"a randomly generated image\">");
-      }
+      for (var _i = 0; _i < currentImageArray.length; _i++) {
+        HTMLImages += "<img src=".concat(currentImageArray[_i], " alt=\"a randomly generated image\">");
+      } //Add container elements
 
-      _HTMLString = _HTMLString + "</details>";
+
+      var _HTMLString = "<details>\n            <summary>".concat(currentUser, "</summary>").concat(HTMLImages, "</details>");
+
       return _HTMLString;
     }
   });
@@ -79,27 +82,32 @@ function updateCollection(email, image) {
   });
 }
 
+function updateCollection(email, image) {
+  savedImages.push({
+    email: email,
+    image: image
+  });
+}
+
 function handleValidForm() {
-  var currentImage = getCurrentImageSrc();
+  var currentImageSrc = $("#res img").prop("src");
   var formData = $("#submit-form").serializeArray();
   var submittedEmail = formData[0].value;
   $(".success-prompt").text("Image saved successfully");
   $("#submit-form").trigger("reset");
-  updateCollection(submittedEmail, currentImage);
-  $(".success-prompt").text("");
-  $("#res img").remove();
-  $("#res").append(generateRandomImage());
+  updateCollection(submittedEmail, currentImageSrc);
+  renderCollections();
+  renderNewImage();
 }
 
 var savedImages = []; //Add Initial image on load
 
 $(function () {
-  return $("#res").append(generateRandomImage());
+  return renderNewImage();
 });
 $("#new-btn").on("click", function () {
   $(".success-prompt").text("");
-  $("#res img").remove();
-  $("#res").append(generateRandomImage());
+  renderNewImage();
 });
 $("#email").on("input", function () {
   clearSuccessPrompt();

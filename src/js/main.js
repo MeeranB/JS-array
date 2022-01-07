@@ -1,13 +1,11 @@
-function generateImageSeed() {
-    return new Date().getTime();
-}
-
 function generateRandomImage() {
-    return `<img alt="randomly generated image" src="https://picsum.photos/200?random&t=${generateImageSeed()}">`;
+    const imageSeed = new Date().getTime();
+    return `<img alt="randomly generated image" src="https://picsum.photos/200?random&t=${imageSeed}">`;
 }
 
-function getCurrentImageSrc() {
-    return $("#res img").prop("src");
+function renderNewImage() {
+    $("#res img").remove();
+    $("#res").append(generateRandomImage());
 }
 
 function clearSuccessPrompt() {
@@ -17,45 +15,53 @@ function clearSuccessPrompt() {
     }
 }
 
-function updateCollection(email, image) {
-    savedImages.push({
-        email,
-        image,
-    });
+function calcOccurences(array) {
+    const occurenceObject = {};
 
-    const counts = {};
-    const savedEmails = savedImages.map(item => item.email);
-
-    for (let i = 0; i < savedEmails.length; i++) {
-        counts[savedEmails[i]] = counts[[savedEmails[i]]]
-            ? counts[[savedEmails[i]]] + 1
+    for (let i = 0; i < array.length; i++) {
+        occurenceObject[array[i]] = occurenceObject[[array[i]]]
+            ? occurenceObject[[array[i]]] + 1
             : 1;
     }
 
+    return occurenceObject;
+}
+
+function renderCollections() {
+    const savedEmails = savedImages.map(item => item.email);
+    const userFrequencies = calcOccurences(savedEmails);
+
+    //collectionContainers conditionally generates HTML for each user based on number of respective saved images.
     const collectionContainers = savedImages.map(item => {
-        if (counts[item.email] == 1) {
+        const currentUser = item.email;
+        const numberOfImagesOwned = userFrequencies[currentUser];
+
+        if (numberOfImagesOwned == 1) {
             const HTMLString = `<details>
-            <summary>${item.email}</summary>
+            <summary>${currentUser}</summary>
             <img src=${item.image} alt="a randomly generated image">
             </details>`;
             return HTMLString;
-        } else {
+        } else if (numberOfImagesOwned > 1) {
             const currentImageArray = [];
-            let HTMLString = `<details>
-            <summary>${item.email}</summary>`;
+            let HTMLImages = "";
 
+            //Generate array of image srcs
             for (let i = 0; i < savedImages.length; i++) {
-                if (savedImages[i].email == item.email) {
+                if (savedImages[i].email == currentUser) {
                     currentImageArray.push(savedImages[i]["image"]);
                 }
             }
-            console.log(currentImageArray);
+
+            //Construct HTML String using image src array
             for (let i = 0; i < currentImageArray.length; i++) {
-                HTMLString =
-                    HTMLString +
-                    `<img src=${currentImageArray[i]} alt="a randomly generated image">`;
+                HTMLImages += `<img src=${currentImageArray[i]} alt="a randomly generated image">`;
             }
-            HTMLString = HTMLString + `</details>`;
+
+            //Add container elements
+            const HTMLString = `<details>
+            <summary>${currentUser}</summary>${HTMLImages}</details>`;
+
             return HTMLString;
         }
     });
@@ -68,27 +74,32 @@ function updateCollection(email, image) {
     });
 }
 
+function updateCollection(email, image) {
+    savedImages.push({
+        email,
+        image,
+    });
+}
+
 function handleValidForm() {
-    const currentImage = getCurrentImageSrc();
+    const currentImageSrc = $("#res img").prop("src");
     const formData = $("#submit-form").serializeArray();
     const submittedEmail = formData[0].value;
     $(".success-prompt").text("Image saved successfully");
     $("#submit-form").trigger("reset");
-    updateCollection(submittedEmail, currentImage);
-    $(".success-prompt").text("");
-    $("#res img").remove();
-    $("#res").append(generateRandomImage());
+    updateCollection(submittedEmail, currentImageSrc);
+    renderCollections();
+    renderNewImage();
 }
 
 const savedImages = [];
 
 //Add Initial image on load
-$(() => $("#res").append(generateRandomImage()));
+$(() => renderNewImage());
 
 $("#new-btn").on("click", () => {
     $(".success-prompt").text("");
-    $("#res img").remove();
-    $("#res").append(generateRandomImage());
+    renderNewImage();
 });
 
 $("#email").on("input", () => {
