@@ -1,17 +1,5 @@
 "use strict";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function generateRandomImage() {
   var imageSeed = new Date().getTime();
   return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/200?random&t=".concat(imageSeed, "\">");
@@ -29,64 +17,33 @@ function clearSuccessPrompt() {
   }
 }
 
-function calcOccurences(array) {
-  var occurenceObject = {};
-
-  for (var i = 0; i < array.length; i++) {
-    occurenceObject[array[i]] = occurenceObject[[array[i]]] ? occurenceObject[[array[i]]] + 1 : 1;
-  }
-
-  return occurenceObject;
-}
-
-function renderCollections() {
-  var savedEmails = savedImages.map(function (item) {
-    return item.email;
-  });
-  var userFrequencies = calcOccurences(savedEmails); //collectionContainers conditionally generates HTML for each user based on number of respective saved images.
-
-  var collectionContainers = savedImages.map(function (item) {
-    var currentUser = item.email;
-    var numberOfImagesOwned = userFrequencies[currentUser];
-
-    if (numberOfImagesOwned == 1) {
-      var HTMLString = "<details>\n            <summary>".concat(currentUser, "</summary>\n            <img src=").concat(item.image, " alt=\"a randomly generated image\">\n            </details>");
-      return HTMLString;
-    } else if (numberOfImagesOwned > 1) {
-      var currentImageArray = [];
-      var HTMLImages = ""; //Generate array of image srcs
-
-      for (var i = 0; i < savedImages.length; i++) {
-        if (savedImages[i].email == currentUser) {
-          currentImageArray.push(savedImages[i]["image"]);
-        }
-      } //Construct HTML String using image src array
-
-
-      for (var _i = 0; _i < currentImageArray.length; _i++) {
-        HTMLImages += "<img src=".concat(currentImageArray[_i], " alt=\"a randomly generated image\">");
-      } //Add container elements
-
-
-      var _HTMLString = "<details>\n            <summary>".concat(currentUser, "</summary>").concat(HTMLImages, "</details>");
-
-      return _HTMLString;
-    }
-  });
-
-  var uniqueCollectionContainers = _toConsumableArray(new Set(collectionContainers));
-
+function renderCollectionsObj() {
   $("#collection").empty();
-  uniqueCollectionContainers.forEach(function (HTMLString) {
-    $("#collection").append(HTMLString);
-  });
+
+  for (var email in savedImages) {
+    var sizeOfCollection = savedImages[email].length;
+
+    if (sizeOfCollection == 1) {
+      var HTMLString = "<details>\n            <summary>".concat(email, "</summary>\n            <img src=").concat(savedImages[email][0], " alt=\"a randomly generated image\">\n            </details>");
+      $("#collection").append(HTMLString);
+    } else if (sizeOfCollection > 1) {
+      var HTMLImageString = "";
+
+      for (var i = 0; i < savedImages[email].length; i++) {
+        HTMLImageString += "<img src=".concat(savedImages[email][i], " alt=\"a randomly generated image\">");
+      }
+
+      $("#collection").append("<details>\n            <summary>".concat(email, "</summary>").concat(HTMLImageString, "</details>"));
+    }
+  }
 }
 
 function updateCollection(email, image) {
-  savedImages.push({
-    email: email,
-    image: image
-  });
+  if (savedImages.hasOwnProperty(email)) {
+    savedImages[email].push(image);
+  } else if (!savedImages.hasOwnProperty(email)) {
+    savedImages[email] = [image];
+  }
 }
 
 function handleValidForm() {
@@ -96,11 +53,11 @@ function handleValidForm() {
   $(".success-prompt").text("Image saved successfully");
   $("#submit-form").trigger("reset");
   updateCollection(submittedEmail, currentImageSrc);
-  renderCollections();
+  renderCollectionsObj();
   renderNewImage();
 }
 
-var savedImages = []; //Add Initial image on load
+var savedImages = {}; //Add Initial image on load
 
 $(function () {
   return renderNewImage();

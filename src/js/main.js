@@ -15,70 +15,35 @@ function clearSuccessPrompt() {
     }
 }
 
-function calcOccurences(array) {
-    const occurenceObject = {};
-
-    for (let i = 0; i < array.length; i++) {
-        occurenceObject[array[i]] = occurenceObject[[array[i]]]
-            ? occurenceObject[[array[i]]] + 1
-            : 1;
-    }
-
-    return occurenceObject;
-}
-
-function renderCollections() {
-    const savedEmails = savedImages.map(item => item.email);
-    const userFrequencies = calcOccurences(savedEmails);
-
-    //collectionContainers conditionally generates HTML for each user based on number of respective saved images.
-    const collectionContainers = savedImages.map(item => {
-        const currentUser = item.email;
-        const numberOfImagesOwned = userFrequencies[currentUser];
-
-        if (numberOfImagesOwned == 1) {
-            const HTMLString = `<details>
-            <summary>${currentUser}</summary>
-            <img src=${item.image} alt="a randomly generated image">
-            </details>`;
-            return HTMLString;
-        } else if (numberOfImagesOwned > 1) {
-            const currentImageArray = [];
-            let HTMLImages = "";
-
-            //Generate array of image srcs
-            for (let i = 0; i < savedImages.length; i++) {
-                if (savedImages[i].email == currentUser) {
-                    currentImageArray.push(savedImages[i]["image"]);
-                }
-            }
-
-            //Construct HTML String using image src array
-            for (let i = 0; i < currentImageArray.length; i++) {
-                HTMLImages += `<img src=${currentImageArray[i]} alt="a randomly generated image">`;
-            }
-
-            //Add container elements
-            const HTMLString = `<details>
-            <summary>${currentUser}</summary>${HTMLImages}</details>`;
-
-            return HTMLString;
-        }
-    });
-
-    const uniqueCollectionContainers = [...new Set(collectionContainers)];
-
+function renderCollectionsObj() {
     $("#collection").empty();
-    uniqueCollectionContainers.forEach(HTMLString => {
-        $("#collection").append(HTMLString);
-    });
+
+    for (const email in savedImages) {
+        const sizeOfCollection = savedImages[email].length;
+
+        if (sizeOfCollection == 1) {
+            const HTMLString = `<details>
+            <summary>${email}</summary>
+            <img src=${savedImages[email][0]} alt="a randomly generated image">
+            </details>`;
+            $("#collection").append(HTMLString);
+        } else if (sizeOfCollection > 1) {
+            let HTMLImageString = "";
+            for (let i = 0; i < savedImages[email].length; i++) {
+                HTMLImageString += `<img src=${savedImages[email][i]} alt="a randomly generated image">`;
+            }
+            $("#collection").append(`<details>
+            <summary>${email}</summary>${HTMLImageString}</details>`);
+        }
+    }
 }
 
 function updateCollection(email, image) {
-    savedImages.push({
-        email,
-        image,
-    });
+    if (savedImages.hasOwnProperty(email)) {
+        savedImages[email].push(image);
+    } else if (!savedImages.hasOwnProperty(email)) {
+        savedImages[email] = [image];
+    }
 }
 
 function handleValidForm() {
@@ -88,11 +53,11 @@ function handleValidForm() {
     $(".success-prompt").text("Image saved successfully");
     $("#submit-form").trigger("reset");
     updateCollection(submittedEmail, currentImageSrc);
-    renderCollections();
+    renderCollectionsObj();
     renderNewImage();
 }
 
-const savedImages = [];
+const savedImages = {};
 
 //Add Initial image on load
 $(() => renderNewImage());
