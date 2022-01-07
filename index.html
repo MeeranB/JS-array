@@ -8,8 +8,18 @@
     <link rel="stylesheet" href="dist/css/styles.css">
 </head>
 <body>
-    <h1>Hello )</h1>
-    <h2>should  blue</h2>
+    <div class="res-container" id="res"></div>
+    <button class="new-btn" id="new-btn">New image</button>
+    <form class="submit-form" id="submit-form">
+        <label for="email">Enter email:</label>
+        <input name="email" id="email" type="email" required>
+        <p class="success-prompt"></p>
+        <input type="submit" value="Submit">
+    </form>
+    <div id="collection">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
     <script src="dist/js/all.js"></script>
 </body>
 </html>

@@ -1,13 +1,26 @@
-$test: blue;
+@import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 
-body {
-    color: red;
+.res-container {
+    margin: 0 auto;
+    width: 200px;
+    height: 200px;
 }
 
-h1 {
-    color: red;
+.new-btn {
+    display: block;
+    margin: 0 auto;
+}
+.submit-form {
+    display: flex;
+    flex-direction: column;
 }
 
-h2 {
-    color: $test;
+.success-prompt {
+    color: green;
+}
+
+.error {
+    color: red;
+    border-color: red;
+    border-width: 2px;
 }
