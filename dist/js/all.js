@@ -17,11 +17,6 @@ function clearSuccessPrompt() {
   }
 }
 
-function checkWidth() {
-  windowWidth = $(window).width();
-  return windowWidth;
-}
-
 function renderCollectionsObj() {
   $("#collection").empty();
 
