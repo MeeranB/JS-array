@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Image Assigner</title>
     <link rel="stylesheet" href="dist/css/styles.css">
 </head>
 <body>
-    <div class="res-container" id="res"></div>
-    <button class="new-btn" id="new-btn">New image</button>
-    <form class="submit-form" id="submit-form">
-        <label for="email">Enter email:</label>
-        <input name="email" id="email" type="email" required>
-        <p class="success-prompt"></p>
-        <input type="submit" value="Submit">
-    </form>
-    <div id="collection">
+    <div class="app-container">
+        <h1 class="title">Image Assigner</h1>
+        <p>This application loads a randomly generated image which can then be assigned to an email address. Users may see which images have been saved under each respective email address.</p>
+        <div class="res-container" id="res"></div>
+        <button class="new-btn button" id="new-btn">New image</button>
+        <form class="submit-form" id="submit-form">
+            <label for="email">Enter email:</label>
+            <input name="email" id="email" type="email" required>
+            <p class="success-prompt"></p>
+            <input class="button" type="submit" value="Save Image">
+        </form>
+        <div class="collection" id="collection">
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>

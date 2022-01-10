@@ -1,18 +1,68 @@
 @import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+);
+
+
+body {
+    padding: 1rem;
+    background-color: #141414;
+    color: #F39C12;
+    p {
+        text-align: center;
+        color: white;
+    }
+    .app-container {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+}
+
+.title {
+    text-align: center;
+}
+
 .res-container {
     margin: 0 auto;
     width: 200px;
     height: 200px;
 }
 
+.button {
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    background-color: #f39c12;
+    padding: 0.4em 1em;
+    border-radius: .25rem;
+    &:hover, &:focus {
+        background-color: adjust-color(#f39c12, $lightness: -30%);
+        text-decoration: none;
+        color: white;
+    }
+}
+
 .new-btn {
     display: block;
-    margin: 0 auto;
+    margin: 1rem auto;
 }
+
 .submit-form {
     display: flex;
     flex-direction: column;
+    label {
+        margin: 0.5rem auto;
+        color: white;
+        @media (min-width: map-get($grid-breakpoints, "md")) {
+            margin-left: 0;
+        }
+    }
 }
 
 .success-prompt {
@@ -23,4 +73,25 @@
     color: red;
     border-color: red;
     border-width: 2px;
+}
+
+.collection {
+    details:first-of-type {
+        padding-top: 2rem;
+    }
+    details {
+        summary {
+            padding-bottom: 2rem;
+        }
+        display: flex;
+        flex-direction: column;
+        background-color: #141414;
+        img:first-of-type {
+            margin-top: 1rem;
+        }
+        img {
+            align-self: center;
+            margin: 2rem auto;
+        }
+    }
 }

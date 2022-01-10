@@ -54,6 +54,7 @@ function handleValidForm() {
   $("#submit-form").trigger("reset");
   updateCollection(submittedEmail, currentImageSrc);
   renderCollectionsObj();
+  $("#submit-form").trigger("reset");
   renderNewImage();
 }
 
@@ -64,6 +65,7 @@ $(function () {
 });
 $("#new-btn").on("click", function () {
   $(".success-prompt").text("");
+  $("#submit-form").trigger("reset");
   renderNewImage();
 });
 $("#email").on("input", function () {
