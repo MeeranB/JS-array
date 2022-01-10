@@ -56,14 +56,26 @@ function handleValidForm() {
     $("#submit-form").trigger("reset");
 }
 
+function addEnterEventHandler() {
+    $(document).on("keypress", function (e) {
+        if (!$("#new-btn").is(":focus")) {
+            if (e.key == "Enter") {
+                $("#submit-form").trigger("submit");
+                return false;
+            }
+        }
+    });
+}
+
 const savedImages = {};
 
 //Add Initial image on load
-$(() => renderNewImage());
+$(() => {
+    addEnterEventHandler();
+});
 
 $("#new-btn").on("click", () => {
     $(".success-prompt").text("");
-    $("#submit-form").trigger("reset");
     renderNewImage();
 });
 
@@ -71,9 +83,19 @@ $("#email").on("input", () => {
     clearSuccessPrompt();
 });
 
+$.validator.methods.email = function (value, element) {
+    return this.optional(element) || /[a-z]+@[a-z]+\.[a-z]+/.test(value);
+};
+
 $("#submit-form").validate({
     submitHandler: handleValidForm,
     invalidHandler: function (form) {
         $(".success-prompt").text("");
+    },
+    rules: {
+        email: {
+            required: true,
+            email: true,
+        },
     },
 });

@@ -56,23 +56,44 @@ function handleValidForm() {
   $("#submit-form").trigger("reset");
 }
 
+function addEnterEventHandler() {
+  $(document).on("keypress", function (e) {
+    if (!$("#new-btn").is(":focus")) {
+      if (e.key == "Enter") {
+        $("#submit-form").trigger("submit");
+        return false;
+      }
+    }
+  });
+}
+
 var savedImages = {}; //Add Initial image on load
 
 $(function () {
-  return renderNewImage();
+  addEnterEventHandler();
 });
 $("#new-btn").on("click", function () {
   $(".success-prompt").text("");
-  $("#submit-form").trigger("reset");
   renderNewImage();
 });
 $("#email").on("input", function () {
   clearSuccessPrompt();
 });
+
+$.validator.methods.email = function (value, element) {
+  return this.optional(element) || /[a-z]+@[a-z]+\.[a-z]+/.test(value);
+};
+
 $("#submit-form").validate({
   submitHandler: handleValidForm,
   invalidHandler: function invalidHandler(form) {
     $(".success-prompt").text("");
+  },
+  rules: {
+    email: {
+      required: true,
+      email: true
+    }
   }
 });
 //# sourceMappingURL=all.js.map
