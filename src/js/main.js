@@ -84,7 +84,10 @@ $("#email").on("input", () => {
 });
 
 $.validator.methods.email = function (value, element) {
-    return this.optional(element) || /[a-z]+@[a-z]+\.[a-z]+/.test(value);
+    return (
+        this.optional(element) ||
+        /^\w+([-+.'][^\s]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)
+    );
 };
 
 $("#submit-form").validate({
