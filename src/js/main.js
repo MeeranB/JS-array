@@ -1,11 +1,10 @@
-function generateRandomImage() {
+function generateRandomImageSrc() {
     const imageSeed = new Date().getTime();
-    return `<img alt="randomly generated image" src="https://picsum.photos/500/300?random&t=${imageSeed}">`;
+    return `https://picsum.photos/500/300?random&t=${imageSeed}`;
 }
 
 function renderNewImage() {
-    $("#res img").remove();
-    $("#res").append(generateRandomImage());
+    $("#res img").attr("src", generateRandomImageSrc());
 }
 
 function clearSuccessPrompt() {

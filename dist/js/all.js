@@ -1,13 +1,12 @@
 "use strict";
 
-function generateRandomImage() {
+function generateRandomImageSrc() {
   var imageSeed = new Date().getTime();
-  return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/500/300?random&t=".concat(imageSeed, "\">");
+  return "https://picsum.photos/500/300?random&t=".concat(imageSeed);
 }
 
 function renderNewImage() {
-  $("#res img").remove();
-  $("#res").append(generateRandomImage());
+  $("#res img").attr("src", generateRandomImageSrc());
 }
 
 function clearSuccessPrompt() {
