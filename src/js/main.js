@@ -1,6 +1,6 @@
 function generateRandomImage() {
     const imageSeed = new Date().getTime();
-    return `<img alt="randomly generated image" src="https://picsum.photos/200?random&t=${imageSeed}">`;
+    return `<img alt="randomly generated image" src="https://picsum.photos/500/300?random&t=${imageSeed}">`;
 }
 
 function renderNewImage() {
@@ -55,7 +55,6 @@ function handleValidForm() {
     updateCollection(submittedEmail, currentImageSrc);
     renderCollectionsObj();
     $("#submit-form").trigger("reset");
-    renderNewImage();
 }
 
 const savedImages = {};

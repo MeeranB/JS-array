@@ -2,7 +2,7 @@
 
 function generateRandomImage() {
   var imageSeed = new Date().getTime();
-  return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/200?random&t=".concat(imageSeed, "\">");
+  return "<img alt=\"randomly generated image\" src=\"https://picsum.photos/500/300?random&t=".concat(imageSeed, "\">");
 }
 
 function renderNewImage() {
@@ -55,7 +55,6 @@ function handleValidForm() {
   updateCollection(submittedEmail, currentImageSrc);
   renderCollectionsObj();
   $("#submit-form").trigger("reset");
-  renderNewImage();
 }
 
 var savedImages = {}; //Add Initial image on load
