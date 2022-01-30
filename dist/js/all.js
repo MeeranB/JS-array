@@ -39,7 +39,12 @@ function renderCollectionsObj() {
 
 function updateCollection(email, image) {
   if (savedImages.hasOwnProperty(email)) {
-    savedImages[email].push(image);
+    if (savedImages[email].includes(image)) {
+      $(".success-prompt").text("Image already in collection.");
+      $(".success-prompt").addClass("error");
+    } else {
+      savedImages[email].push(image);
+    }
   } else if (!savedImages.hasOwnProperty(email)) {
     savedImages[email] = [image];
   }
@@ -49,6 +54,7 @@ function handleValidForm() {
   var currentImageSrc = $("#res img").prop("src");
   var formData = $("#submit-form").serializeArray();
   var submittedEmail = formData[0].value;
+  $(".success-prompt").removeClass("error");
   $(".success-prompt").text("Image saved successfully");
   $("#submit-form").trigger("reset");
   updateCollection(submittedEmail, currentImageSrc);
@@ -71,6 +77,7 @@ var savedImages = {}; //Add Initial image on load
 
 $(function () {
   addEnterEventHandler();
+  renderNewImage();
 });
 $("#new-btn").on("click", function () {
   $(".success-prompt").text("");
